@@ -5,16 +5,18 @@ import {
     getAllEvenements,
     getEvenementById,
     updateEvenement,
-    deleteEvenement 
+    deleteEvenement,
+    getEvenementsByGroupId
 } from '../controllers/evenement.controller';
 
 const router = Router();
 
 
-router.post('/evenements', createEvenement);
+router.post('/evenements/:userId', createEvenement);
 router.get('/evenements', getAllEvenements);
 router.get('/evenements/:id', getEvenementById);
-router.put('/evenements/:id', updateEvenement);
-router.delete('/evenements/:id', deleteEvenement);
+router.get('/groups/:groupId/evenements', getEvenementsByGroupId);
+router.patch('/evenements/:id/:userId', updateEvenement);
+router.delete('/evenements/:id/:userId', deleteEvenement);
 
 export default router;

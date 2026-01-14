@@ -9,7 +9,7 @@ npm install express
 npm install -g typescript
 
 /racine
-npm create vite@latest frontend -- --template react
+npm create vite@latest frontend -- --template react-ts
 
 /frontend
 npm install
