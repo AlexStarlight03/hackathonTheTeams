@@ -9,11 +9,11 @@ import {
 
 const router = Router();
 
-router.post('/ressources', createRessource);
+router.post('/ressources/:userId', createRessource);
 router.get('/ressources', getAllRessources);
 router.get('/ressources/:id', getRessourceById);
-router.put('/ressources/:id', updateRessource);
-router.delete('/ressources/:id', deleteRessource);
+router.put('/ressources/:id/:userId', updateRessource);
+router.delete('/ressources/:id/:userId', deleteRessource);
 
 export default router;
 
