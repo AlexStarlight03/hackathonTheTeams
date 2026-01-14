@@ -3,52 +3,30 @@ import prisma from '../prisma/prisma';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 
-interface LoginBody {
-  email: string;
-  password: string;
+import dotenv from 'dotenv';
+dotenv.config();
+
+export const login = async (req: Request, res: Response) =>{
+    const { email, password} = req.body;
+
+    const user = await prisma.user.findUnique({where: {email}});
+    if(!user) return res.status(400).json({message:' Utilisateur non trouve !'});
+
+    const motDePasseValide = await bcrypt.compare(password, user.mot_de_passe)
+    if(!motDePasseValide) return res.status(400).json({message: 'Mot de passe incorrect !'});
+
+    const token = jwt.sign(
+        {sub: user.id, email: user.email},
+        process.env.JWT_SECRET as string,
+        {expiresIn: '1h'}
+    )
+
+    return res.status(200).json({
+        success: true,
+        message: 'Connexion reussie !',
+        token
+    })
 }
-
-export const login = async (req: Request, res: Response) => {
-  	const { email, password } = req.body;
- 	
-	const user = await prisma.user.findUnique({where: {email}});
-    if (!user) {
-    	return res.status(400).json({ message: "Utilisateur non existant." });
-    }
-
-	const isPasswordValid = await bcrypt.compare(password, user.mot_de_passe);
-	if (!isPasswordValid) {
-		return res.status(400).json({ message: "Mot de passe incorrect." });
-	}
-    const secret = process.env.JWT_SECRET as string;
-    const expiresIn = process.env.JWT_EXPIRES_IN || "1h";
-
-    if (!secret) {
-        return res.status(500).json({ message: "JWT secret not configured" });
-    }
-
-	try {
-		const token = jwt.sign(
-		{
-			sub: user.id,
-			email: user.email
-		},
-		secret,
-		{ expiresIn: expiresIn }
-		);
-
-		return res.status(200).json({ 
-			success: true,
-			message: "Authentification réussie",
-			token 
-		});
-	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: "Erreur lors de la génération du token"
-		});
-	}
-};
 
 export const register = async (req: Request, res: Response) => {
     const { nom, prenom, email, password} = req.body;

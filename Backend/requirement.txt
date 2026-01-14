@@ -2,6 +2,7 @@
 npm init -y
 npm install express jsonwebtoken dotenv bcrypt prisma @prisma/client
 npm install @prisma/adapter-neon
+npm install --save-dev tsx
 npm install -D typescript ts-node-dev @types/node @types/express @types/jsonwebtoken @types/bcrypt
 npx prisma init
 npx tsc --init
