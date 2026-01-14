@@ -1,13 +1,12 @@
 // Generated from TheTeams SQL dump (best-effort).
-// Review relations: some foreign keys in the SQL looked inconsistent, so a few were inferred from column names.
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output = "./generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -23,6 +22,7 @@ model User {
   professionnelProfil   Professionnel?
   groupesModerateur     Group[] @relation("ModerateursGroup")
   groupes               Group[] @relation("GroupMembers")
+  eventModerateur       Evenement[]
   conversations         FilDiscussion[] @relation("DiscussionParticipants")
   messagesEnvoyes       Message[]    @relation("Message_Emmeteur")
   journal               JournalEntry[]

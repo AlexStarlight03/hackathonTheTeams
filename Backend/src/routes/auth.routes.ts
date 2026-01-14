@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import type { Request, Response } from "express";
-import { login } from '../controllers/auth.controller';
+import { login, logout, register } from '../controllers/auth.controller';
 import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -14,6 +14,7 @@ router.get('/dashboard', authenticate, (req: Request, res: Response): void => {
     user: req.user
     });
 });
-router.post('/logout', logoutUser);
+router.post('/logout', logout);
+router.post("/register", register);
 
 export default router;

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 interface TokenPayload {
@@ -42,10 +42,17 @@ export const authenticate = (
 
 export const authorizedRoles = (roles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        if (!req.user || !roles.includes(req.user.role)) {
+        if (!req.user) {
             return res.status(403).json({ error: "Accès refusé" });
         }
-        next();
+        if (req.user.professionnelProfile != null && roles.includes("Professionnel")) {
+            return next();
+        }
+        if (req.user.groupesModerateur.length != 0 && roles.includes("Modérateur")) {
+            return next();
+        }
+        else 
+            return res.status(403).json({ error: "Accès refusé" });
     };
 };
 

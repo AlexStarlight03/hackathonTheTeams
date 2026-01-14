@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import prisma from '../prisma/prisma';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
@@ -16,7 +16,7 @@ export const login = async (req: Request, res: Response) => {
     	return res.status(400).json({ message: "Utilisateur non existant." });
     }
 
-	const isPasswordValid = await bcrypt.compare(password, user.password);
+	const isPasswordValid = await bcrypt.compare(password, user.mot_de_passe);
 	if (!isPasswordValid) {
 		return res.status(400).json({ message: "Mot de passe incorrect." });
 	}
@@ -60,7 +60,7 @@ export const register = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10,);
     const newUser = await prisma.user.create({
-        data:{nom, prenom, email, password: hashedPassword}
+        data:{nom, prenom, email, mot_de_passe: hashedPassword}
     })
 
     return res.status(201).json({

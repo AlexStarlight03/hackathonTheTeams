@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticateUser } from '../middleware/auth.middleware';
+import { authenticate, authorizedRoles, authorizedGroup } from '../middleware/auth.middleware';
 import { getUserById, updateUser } from '../controllers/user.controller';
 
 import {
@@ -8,15 +8,15 @@ import {
   getProfessionnelById,
   updateProfessionnel,
   deleteProfessionnel,
-  userProStatu,
+  userProStatus
 } from '../controllers/professionnel.controller';
 
 const router = Router();
 
-router.post('/professionnels', userProStatu(false), createProfessionnel);
+router.post('/professionnels', userProStatus(false), createProfessionnel);
 router.get('/professionnels', getAllProfessionnels);
 router.get('/professionnels/:id', getProfessionnelById);
-router.put('/professionnels/:id', userProStatu(true), updateProfessionnel);
-router.delete('/professionnels/:id', userProStatu(true), deleteProfessionnel);
+router.put('/professionnels/:id', userProStatus(true), updateProfessionnel);
+router.delete('/professionnels/:id', userProStatus(true), deleteProfessionnel);
 
 export default router;
