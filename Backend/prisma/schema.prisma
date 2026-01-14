@@ -1,0 +1,120 @@
+// Generated from TheTeams SQL dump (best-effort).
+// Review relations: some foreign keys in the SQL looked inconsistent, so a few were inferred from column names.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int          @id @default(autoincrement())
+  nom           String       @db.VarChar(50)
+  prenom        String       @db.VarChar(50)
+  email         String       @unique @db.VarChar(125)
+  mot_de_passe  String       @db.VarChar(125)
+  professionnel Boolean      @default(false)
+  creation_date DateTime     @default(now())
+
+  // relations
+  professionnelProfil   Professionnel?
+  groupesModerateur     Group[] @relation("ModerateursGroup")
+  groupes               Group[] @relation("GroupMembers")
+  conversations         FilDiscussion[] @relation("DiscussionParticipants")
+  messagesEnvoyes       Message[]    @relation("Message_Emmeteur")
+  journal               JournalEntry[]
+
+}
+
+model Professionnel {
+  /// 1–1 extension of User (same id)
+  id            Int        @id
+  qualification String
+
+  user       User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  
+  ressourcesCrees Ressource[]
+  groupesCrees    Group[]
+
+}
+
+model Group {
+  id              Int      @id @default(autoincrement())
+  createurId      Int
+  nom             String   @db.VarChar(50) @unique
+  description     String   
+  new_inscription Boolean  @default(true)
+
+  membres         User[] @relation("GroupMembers")
+  moderateurs     User[] @relation("ModerateursGroup")
+
+  createur        Professionnel @relation(fields: [createurId], references: [id])
+
+  evenements      Evenement[]
+  discussions     FilDiscussion[]
+
+}
+
+model Ressource {
+  id             Int    @id @default(autoincrement())
+  professionalId Int
+  nom            String @db.VarChar(125)
+  description    String
+
+  professionnel Professionnel @relation(fields: [professionalId], references: [id])
+
+}
+
+model JournalEntry {
+  id           Int      @id @default(autoincrement())
+  userId       Int      
+  date         DateTime @default(now())
+  humeur       Int
+  energie      Int
+  sommeil      Int
+  anxiete      Int
+  journal      String?
+  modification Boolean  @default(true)
+
+  user         User @relation(fields: [userId], references: [id])
+
+}
+
+model Evenement {
+  id            Int      @id @default(autoincrement())
+  id_moderateur Int
+  nom           String   @db.VarChar(255)
+  groupeId      Int     
+  date          DateTime
+  description   String
+
+  moderateur    User @relation(fields: [id_moderateur], references: [id])
+  groupe        Group      @relation(fields: [groupeId], references: [id])
+
+}
+
+model FilDiscussion {
+  id            Int   @id @default(autoincrement())
+  titre         String? @db.VarChar(125)
+  groupeId      Int?
+  participants  User[] @relation("DiscussionParticipants")
+  messages      Message[]
+
+  groupe      Group? @relation(fields: [groupeId], references: [id])
+
+}
+
+model Message {
+  id            Int      @id @default(autoincrement())
+  id_discussion Int
+  time          DateTime @default(now())
+  message       String
+  emmeteurId    Int
+
+  discussion   FilDiscussion @relation(fields: [id_discussion], references: [id])
+  emmeteur     User       @relation("Message_Emmeteur", fields: [emmeteurId], references: [id])
+
+}
