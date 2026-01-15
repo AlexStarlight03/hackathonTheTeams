@@ -1,4 +1,4 @@
-import { Professionnel } from "./professionnel";
+import type { Professionnel } from "./professionnel";
 
 export interface Ressource {
     id: number;
