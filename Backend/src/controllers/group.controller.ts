@@ -178,17 +178,24 @@ export const getGroups= async(req: Request, res: Response)=>{
     }
 }
 
-export const getGroupById= async(req: Request, res: Response)=>{
+export const getGroupById = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid group id' });
+    }
     const group = await prisma.group.findUnique({
         where: { id },
         include: {
             membres: true,
-            createur: true
+            createur: true,
+            moderateurs: true
         }
     });
-    res.json(group);
-}
+    if (!group) {
+        return res.status(404).json({ error: 'Group not found' });
+    }
+    res.json({ data: group });
+};
 
 export const deleteGroup= async(req: Request, res: Response)=>{
     const id = Number(req.params.id);

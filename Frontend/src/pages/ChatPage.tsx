@@ -7,7 +7,7 @@ interface Props {
   userId: number;
 }
 
-export function ChatPage({ discussionId, userId }: Props) {
+export default function ChatPage({ discussionId, userId }: Props) {
   const { messages, send, loading } = useMessages(discussionId, userId);
 
   if (loading) return <p>Chargement...</p>;

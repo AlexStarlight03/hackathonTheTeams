@@ -47,6 +47,61 @@ export async function getAllDiscussion(req: Request, res: Response) {
 }
 
 /**
+ * Récupérer une discussions spécifique
+ */
+export async function getDiscussionById(req: Request, res: Response) {
+  try {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'ID discussion invalide' });
+    }
+
+    const discussion = await prisma.filDiscussion.findUnique({
+      where: { id },
+      include: {
+        participants: {
+          select: {
+            id: true,
+            nom: true,
+            prenom: true,
+            email: true
+          }
+        },
+        groupe: {
+          select: {
+            id: true,
+            nom: true,
+            description: true
+          }
+        },
+        messages: {
+          orderBy: { time: 'desc' },
+          take: 1,
+          include: {
+            emmeteur: {
+              select: {
+                id: true,
+                nom: true,
+                prenom: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!discussion) {
+      return res.status(404).json({ error: 'Discussion non trouvée' });
+    }
+
+    res.status(200).json(discussion);
+  } catch (error) {
+    console.error('Erreur lors de la récupération de la discussion:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération de la discussion' });
+  }
+}
+
+/**
  * Récupérer les discussions d'un utilisateur spécifique
  */
 export async function getDiscussionByUserId(req: Request, res: Response) {

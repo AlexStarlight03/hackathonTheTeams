@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '../config';
 import type { Professionnel } from '../types';
 
-export const createProfessionnel = async (userId: number | string, qualifications: string | string[]): Promise<{ user: any; professionnel: Professionnel }> => {
+export const createProfessionnel = async (userId: number, qualifications: string | string[]): Promise<{ user: any; professionnel: Professionnel }> => {
     const res = await fetch(`${API_BASE_URL}/professionnels/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

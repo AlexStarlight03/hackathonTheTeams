@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.middleware';
 import { 
     createEvenement,
     getAllEvenements,
@@ -12,11 +11,11 @@ import {
 const router = Router();
 
 
-router.post('/evenements/:userId', createEvenement);
-router.get('/evenements', getAllEvenements);
-router.get('/evenements/:id', getEvenementById);
-router.get('/groups/:groupId/evenements', getEvenementsByGroupId);
-router.patch('/evenements/:id/:userId', updateEvenement);
-router.delete('/evenements/:id/:userId', deleteEvenement);
+router.post('/:userId', createEvenement);
+router.get('/', getAllEvenements);
+router.get('/:id', getEvenementById);
+router.get('/:groupId/evenements', getEvenementsByGroupId);
+router.patch('/:id/:userId', updateEvenement);
+router.delete('/:id/:userId', deleteEvenement);
 
 export default router;

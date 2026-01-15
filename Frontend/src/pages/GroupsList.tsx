@@ -12,6 +12,7 @@ type Props = {
 export default function GroupsList({ onSelectGroup }: Props) {
     const [groups, setGroups] = useState<Group[]>([]);
     const [search, setSearch] = useState("");
+    const [searchInput, setSearchInput] = useState("");
     const [openGroups, setOpenGroups] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -49,8 +50,8 @@ export default function GroupsList({ onSelectGroup }: Props) {
             )}
             <input
             placeholder="Rechercher un groupe"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             />
             <label>
                 <input
@@ -60,6 +61,7 @@ export default function GroupsList({ onSelectGroup }: Props) {
                 />
                 Groupes accueillant de nouveaux membres
             </label>
+            <button onClick={() => setSearch(searchInput)} >Rechercher</button>
 
             {filteredGroups.map((group) => (
                 <div key={group.id} onClick={() => onSelectGroup(group.id)} style={{ cursor: "pointer" }}>

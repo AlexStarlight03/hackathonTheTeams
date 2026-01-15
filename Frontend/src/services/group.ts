@@ -11,7 +11,7 @@ export const getGroups = async (): Promise<Group[]> => {
 };
 
 export const getGroupById = async (id: number): Promise<Group> => {
-    const res = await fetch(`${API_BASE_URL}/group/${id}`);
+    const res = await fetch(`${API_BASE_URL}/groups/${id}`);
     if (!res.ok) {
         throw new Error('Network response was not ok');
     };
@@ -27,7 +27,7 @@ export type CreateGroupPayload = {
 }
 
 export const createGroup = async (payload: CreateGroupPayload): Promise<Group> => {
-    const res = await fetch(`${API_BASE_URL}/group`, {
+    const res = await fetch(`${API_BASE_URL}/groups`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export const createGroup = async (payload: CreateGroupPayload): Promise<Group> =
 };
 
 export const joinGroup = async (groupId: number, userId: number): Promise<Group> => {
-    const res = await fetch(`${API_BASE_URL}/${groupId}/join/${userId}`, {
+    const res = await fetch(`${API_BASE_URL}/groups/${groupId}/join/${userId}`, {
         method: 'POST',
     });
     if (!res.ok) {
@@ -53,7 +53,7 @@ export const joinGroup = async (groupId: number, userId: number): Promise<Group>
 };
 
 export const leaveGroup = async (groupId: number, userId: number): Promise<Group> => {
-    const res = await fetch(`${API_BASE_URL}/${groupId}/leave/${userId}`, {
+    const res = await fetch(`${API_BASE_URL}/groups/${groupId}/leave/${userId}`, {
         method: 'POST',
     });
     if (!res.ok) {
@@ -64,7 +64,7 @@ export const leaveGroup = async (groupId: number, userId: number): Promise<Group
 };
 
 export const addModerateur = async (groupId: number, userId: number): Promise<Group> => {
-    const res = await fetch(`${API_BASE_URL}/${groupId}/addmod/${userId}`, {
+    const res = await fetch(`${API_BASE_URL}/groups/${groupId}/addmod/${userId}`, {
         method: 'POST',
     });
     if (!res.ok) {
@@ -75,7 +75,7 @@ export const addModerateur = async (groupId: number, userId: number): Promise<Gr
 };
 
 export const deleteModerateur = async (groupId: number, userId: number): Promise<Group> => {
-    const res = await fetch(`${API_BASE_URL}/${groupId}/deletemod/${userId}`, {
+    const res = await fetch(`${API_BASE_URL}/groups/${groupId}/deletemod/${userId}`, {
         method: 'POST',
     });
     if (!res.ok) {
@@ -92,7 +92,7 @@ export type UpdateGroupPayload = {
 }
 
 export const updateGroup = async (id: number, userId: number, payload: UpdateGroupPayload): Promise<Group> => {
-    const res = await fetch(`${API_BASE_URL}/group/${id}/${userId}`, {
+    const res = await fetch(`${API_BASE_URL}/groups/${id}/${userId}`, {
         method: 'PATCH',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -105,7 +105,7 @@ export const updateGroup = async (id: number, userId: number, payload: UpdateGro
 };
 
 export const deleteGroup = async (id: number, userId: number): Promise<{ message: string }> => {
-    const res = await fetch(`${API_BASE_URL}/group/${id}/${userId}`, {
+    const res = await fetch(`${API_BASE_URL}/groups/${id}/${userId}`, {
         method: 'DELETE',
     });
     if (!res.ok) {
