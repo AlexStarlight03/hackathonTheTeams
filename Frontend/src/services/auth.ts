@@ -55,6 +55,22 @@ export function login(email: string, password: string) {
     });
 }
 
+export function register(nom: string, prenom: string, email: string, password: string) {
+    return fetch(`${API_BASE_URL}/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ nom, prenom, email, password }),
+    }).then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            return true;
+        }
+        throw new Error(data.message || "L'inscription a échoué");
+    });
+}
+
 export function logout() {
     localStorage.removeItem("token");
     return fetch(`${API_BASE_URL}/logout`, {
