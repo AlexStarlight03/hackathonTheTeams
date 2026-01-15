@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getGroupById, joinGroup, leaveGroup } from "../services/group";
+import { getGroupById, joinGroup, leaveGroup , addModerateur, deleteModerateur, deleteGroup} from "../services/group";
 import { getEvenementsByGroupId } from "../services/evenement";
 import type { Group, Evenement } from "../types";
 import { getUserIdFromToken } from "../services/auth";
-import CreateEvenementForm from "../components/CreateEvenementForn";
+import CreateEvenementForm from "../components/CreateEvenementForm";
 
 type Props = {
     groupId: number;
@@ -19,6 +19,8 @@ export default function GroupPage({ groupId, onBack }: Props) {
    const userId = getUserIdFromToken();
 
    const isModerator = group?.moderateurs?.some((mod) => mod.id === userId);
+   const isLoggedIn = !!localStorage.getItem("token");
+   const isCreateur = group?.createur?.id === userId;
 
     const loadData = async () => {
         setLoading(true);
@@ -49,11 +51,26 @@ export default function GroupPage({ groupId, onBack }: Props) {
             <button onClick={onBack}>Retour liste des groupes</button>
             <h1>{group.nom}</h1>
             <p>{group.description}</p>
-             {/* JOIN / LEAVE */}
-            {isMember ? (
-                <button onClick={() => leaveGroup(groupId, userId).then(loadData)}>Quitter le groupe</button>
+            {/* JOIN / LEAVE */}
+            {isLoggedIn && (
+            isMember ? (
+                <button onClick={() => leaveGroup(groupId, userId).then(loadData)}>
+                Quitter le groupe
+                </button>
             ) : (
-                <button onClick={() => joinGroup(groupId, userId).then(loadData)}>Rejoindre le groupe</button>
+                <button onClick={() => joinGroup(groupId, userId).then(loadData)}>
+                Rejoindre le groupe
+                </button>
+            )
+            )}
+            {isMember && isLoggedIn && isCreateur && (
+                <button
+                    onClick={async () => {
+                        await deleteGroup(groupId, userId);
+                        loadData();
+                    }}>
+                    Supprimer le groupe
+                </button>
             )}
 
             {/*Membres*/}
@@ -65,6 +82,26 @@ export default function GroupPage({ groupId, onBack }: Props) {
                     </li>
                 ))}
             </ul>
+            {isMember && isLoggedIn && !isModerator && (
+                <button
+                    onClick={async () => {
+                        await addModerateur(groupId, userId);
+                        loadData();
+                    }}
+                >
+                    Devenir Modérateur du groupe
+                </button>
+            )}
+            {isMember && isLoggedIn && isModerator && (
+                <button
+                    onClick={async () => {
+                        await deleteModerateur(groupId, userId);
+                        loadData();
+                    }}
+                >
+                    Ne plus être Modérateur du groupe
+                </button>
+            )}
             {/*Événements*/}
             <h3>Événements du groupe</h3>
             {/*Moderateurs seulement*/}

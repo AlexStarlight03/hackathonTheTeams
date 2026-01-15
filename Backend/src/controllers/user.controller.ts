@@ -4,14 +4,21 @@ import prisma from '../prisma/prisma';
 export async function getAllUsers (req: Request, res: Response) {
     try {
         const users = await prisma.user.findMany({
-            select: {id: true, nom: true, prenom: true, email: true, creation_date: true}
+            include: {
+                professionnelProfil: true,
+                groupesModerateur: true,
+                groupes: true,
+                eventModerateur: true,
+                conversations: true,
+                messagesEnvoyes: true,
+                journal: true
+            }
         });
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
     }
 }
-
 
 export async function getUserById (req: Request, res: Response) {
     const { id } = req.params;

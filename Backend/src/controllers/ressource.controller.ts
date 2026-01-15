@@ -13,28 +13,19 @@ import type { Request, Response } from "express";
 
 export async function  createRessource (req: Request, res: Response) {
     const id = Number(req.params.userId);
-    const { nom, description } = req.body;
-    if (!nom || !description) {
+    const { nom, description, professionnel } = req.body;
+    const professionalId = professionnel?.id;
+
+    if (!nom || !description || !professionalId) {
         return res.status(400).json({
             success: false,
             message: 'Tous les champs sont obligatoires pour créer une ressource'
         });
     }
     try {
-        // check if user exists
-        const user = await prisma.user.findUnique({
-            where: { id }
-        });
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'Utilisateur non trouvé'
-            });
-        }
-
         //check if user is a professional
-        const isProfessional = await prisma.professionnel.findFirst({
-            where: { id }
+        const isProfessional = await prisma.professionnel.findUnique({
+            where: { id: professionalId }
         });
         if (!isProfessional) {
             return res.status(403).json({
@@ -45,7 +36,7 @@ export async function  createRessource (req: Request, res: Response) {
 
         const newRessource = await prisma.ressource.create({
             data: {
-                professionalId: id,
+                professionalId,
                 nom,
                 description
             }
