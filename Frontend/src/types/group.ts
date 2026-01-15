@@ -1,6 +1,6 @@
 import type { User } from './user';
 import type { Evenement } from './evenement';
-import type { Discussions } from './filDiscussion';
+import type { FilDiscussion } from './filDiscussion';
 
 export interface Group {
     id : number;
@@ -11,7 +11,7 @@ export interface Group {
     membres : User[];
     moderateurs : User[];
     evenementsIds : Evenement[];
-    dicussion : Discussions[];
+    discussions : FilDiscussion[];
 }
 
 
