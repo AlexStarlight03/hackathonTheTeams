@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getGroupById, joinGroup, leaveGroup } from "../services/group";
 import { getEvenementsByGroupId } from "../services/evenement";
 import type { Group, Evenement } from "../types";
+import { getUserIdFromToken } from "../services/auth";
+import CreateEvenementForm from "../components/CreateEvenementForn";
 
 type Props = {
     groupId: number;
@@ -12,8 +14,11 @@ export default function GroupPage({ groupId, onBack }: Props) {
    const [group, setGroup] = useState<Group | null>(null);
    const [evenements, setEvenements] = useState<Evenement[]>([]);
    const [loading, setLoading] = useState(true);
+   const [showCreateEvenementForm, setShowCreateEvenementForm] = useState(false);
 
-   const userId = 1; // Remplacez par l'ID de l'utilisateur connecté
+   const userId = getUserIdFromToken();
+
+   const isModerator = group?.moderateurs?.some((mod) => mod.id === userId);
 
     const loadData = async () => {
         setLoading(true);
@@ -62,6 +67,27 @@ export default function GroupPage({ groupId, onBack }: Props) {
             </ul>
             {/*Événements*/}
             <h3>Événements du groupe</h3>
+            {/*Moderateurs seulement*/}
+            {isModerator && (
+                <>
+                {!showCreateEvenementForm && (
+                    <button onClick={() => setShowCreateEvenementForm(true)}>
+                        Créer un événement
+                    </button>
+                )}
+                {showCreateEvenementForm && (
+                <CreateEvenementForm
+                    groupId = {group.id}
+                    userId={userId}
+                    onCreate={() => {
+                        setShowCreateEvenementForm(false);
+                        loadData();
+                    }}
+                    onCancel={() => setShowCreateEvenementForm(false)}
+                    />
+                    )}
+                </>
+            )}
             {evenements.length === 0 &&  <p>Aucun événement</p>}
 
             {evenements.map((evenement) => (

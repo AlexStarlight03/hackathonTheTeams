@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getGroups } from "../services/group";
 import type { Group } from "../types";
 import GroupCard from "../components/GroupCard";
+import CreateGroupForm from "../components/CreateGroupForm";
+import {getUserIdFromToken, isUserProfessional} from "../services/auth";
 
 type Props = {
   onSelectGroup: (id: number) => void;
@@ -11,6 +13,10 @@ export default function GroupsList({ onSelectGroup }: Props) {
     const [groups, setGroups] = useState<Group[]>([]);
     const [search, setSearch] = useState("");
     const [openGroups, setOpenGroups] = useState(false);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+
+    const userId = getUserIdFromToken();
+    const isProfessional = isUserProfessional();
 
     useEffect(() => {
         getGroups().then(setGroups);
@@ -21,16 +27,26 @@ export default function GroupsList({ onSelectGroup }: Props) {
         (!openGroups || group.new_inscription)
     );
 
-    {filteredGroups.map((group) => (
-        <div key={group.id} onClick={() => onSelectGroup(group.id)}>
-            <GroupCard group={group} />
-        </div>
-    ))}
-
     return (
         <div>
             <h1>Groupes</h1>
-
+            {isProfessional && userId && (
+                <>
+                {!showCreateForm && (
+                    <button onClick={() => setShowCreateForm(true)}>Créer un nouveau groupe</button>
+                )}
+                {showCreateForm && (
+                    <CreateGroupForm
+                        userId={userId}
+                        onCreate={() => {
+                            setShowCreateForm(false);
+                            getGroups().then(setGroups);
+                        }}
+                        onCancel={() => setShowCreateForm(false)}
+                    />
+                )}
+                </>
+            )}
             <input
             placeholder="Rechercher un groupe"
             value={search}
@@ -46,7 +62,9 @@ export default function GroupsList({ onSelectGroup }: Props) {
             </label>
 
             {filteredGroups.map((group) => (
+                <div key={group.id} onClick={() => onSelectGroup(group.id)} style={{ cursor: "pointer" }}>
                 <GroupCard key={group.id} group={group} />
+                </div>
             ))}
         </div>
     );
