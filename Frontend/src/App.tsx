@@ -4,8 +4,8 @@ import { useState } from 'react'
 import './App.css'
 import GroupsList from "./pages/GroupsList";
 import GroupPage from "./pages/Group";
-// import Evenements from "./pages/Evenements";
-// import Ressources from "./pages/Ressources";
+import Evenements from "./pages/Evenements";
+import Ressources from "./pages/Ressources";
 
 
 type Page =
@@ -36,9 +36,8 @@ function App() {
           onBack={() => setPage({ name: "groups" })}
         />
       )}
-
-      {/* {page.name === "events" && <Evenements />}
-      {page.name === "ressources" && <Ressources />} */}
+      {page.name === "events" && <Evenements />}
+      {page.name === "ressources" && <Ressources />}
       </>
   )
 }
