@@ -33,7 +33,7 @@ export default function EvenementsList() {
             />
             <button onClick={() => setSearch(searchInput)} >Rechercher</button>
             {filteredEvenements.map((evenement) => (
-                <div>
+                <div key={evenement.id}>
                     <EvenementCard evenement={evenement} />
                 </div>
             ))}

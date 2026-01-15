@@ -18,18 +18,19 @@ export async function  createProfessionnel (req: Request, res: Response) {
             ? req.body.qualifications
             : JSON.stringify(req.body.qualifications ?? '');
 
-        const updatedUser = await prisma.user.update({
-          where: { id: id as any },
-          data: { professionnel: true },
-        });
-
+            
         const professionnel = await prisma.professionnel.create({
-          data: {
-            id: id as any,
-            qualification,
-          }
+            data: {
+                id: id as any,
+                qualification,
+            }
         });
 
+        const updatedUser = await prisma.user.update({
+            where: { id: id as any },
+            data: { professionnel: true, professionnelProfil: { connect: { id: professionnel.id } } }
+        });
+        
         return res.status(201).json({ user: updatedUser, professionnel });
     } catch (error) {
         console.error(error);

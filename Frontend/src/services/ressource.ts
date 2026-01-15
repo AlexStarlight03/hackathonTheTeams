@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../config";
-import type { Ressource } from "../types";
+import type { Professionnel, Ressource } from "../types";
 
 export const getAllRessources = async (): Promise<Ressource[]> => {
     const res = await fetch(`${API_BASE_URL}/ressources`);
@@ -22,12 +22,14 @@ export const getRessourceById = async (id: number): Promise<Ressource> => {
 export type CreateRessourcePayload = {
     nom: string;
     description: string;
+    professionnel: { id: number };
 };
 
 export const createRessource = async (userId: number, payload: CreateRessourcePayload): Promise<Ressource> => {
     const res = await fetch(`${API_BASE_URL}/ressources/${userId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+         },
         body: JSON.stringify(payload),
     });
     if (!res.ok) {

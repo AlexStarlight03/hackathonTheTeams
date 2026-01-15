@@ -5,8 +5,8 @@ import ProfessionnelForm from "../components/ProfessionnelForm";
 
 type Props = {
     isLoggedIn: boolean;
-    user? : {prenom: string; professionnel?: boolean; id?: number};
-    onLogin: (user: { prenom: string; professionnel?: boolean; id?: number }) => void;
+    user?: { prenom: string; email: string; professionnel?: boolean; id?: number };
+    onLogin: (user: { prenom: string; email: string; professionnel?: boolean; id?: number }) => void;
     onLogout: () => void;
     navigate: (page: any) => void;
 };
@@ -36,8 +36,11 @@ export default function Home({ isLoggedIn, user, onLogin, onLogout, navigate }: 
         if (!user?.id) return;
         setProfessional(true);
         try {
-            const res = await createProfessionnel(user.id, qualifications);
-            onLogin(res.user);
+            await createProfessionnel(user.id, qualifications);
+            const loginRes = await login(user.email, password);
+            if (loginRes && loginRes.success) {
+                onLogin(loginRes.user); // This will update your state and token
+            }
             setShowQualiInput(false);
         } catch (err) {
             setError("Erreur lors de la mise à jour du statut professionnel.");
