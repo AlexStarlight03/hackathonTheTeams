@@ -23,6 +23,7 @@ export type CreateGroupPayload = {
     nom: string;
     description: string;
     createurId: number;
+    new_inscription: boolean;
 }
 
 export const createGroup = async (payload: CreateGroupPayload): Promise<Group> => {
