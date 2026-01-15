@@ -18,7 +18,7 @@ router.post('/:groupId/join/:userId',joinGroup);
 router.post('/:groupId/leave/:userId',leaveGroup);
 router.post('/:groupId/addmod/:userId',addModerateur);
 router.post('/:groupId/deletemod/:userId',deleteModerateur);
-router.get('/group', getGroups);
+router.get('/groups', getGroups);
 router.get('/group/:id', getGroupById);
 router.patch('/group/:id/:userId', updateGroup);
 router.delete('/group/:id/:userId', deleteGroup);
