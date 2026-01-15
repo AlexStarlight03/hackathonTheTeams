@@ -1,10 +1,27 @@
-import type { User } from './user';
-import type { FilDiscussion } from './filDiscussion';
+
+export interface User {
+  id: number;
+  nom: string;
+  prenom: string;
+  email: string;
+}
 
 export interface Message {
-    id: number;
-    id_discussion: FilDiscussion['id'];
-    time: string;
-    message: string;
-    emmeteur: User['id'];
+  id: number;
+  message: string;
+  time: string;
+  emmeteurId: number;
+  emmeteur: User;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface MessagesResponse {
+  messages: Message[];
+  pagination: Pagination;
 }
