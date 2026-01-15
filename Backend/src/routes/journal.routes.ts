@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.middleware';
 import {
   createJournalEntry,
   getJournalEntries,
@@ -11,10 +10,10 @@ import {
 const router = Router();
 
 
-router.post('/journals', createJournalEntry);
-router.get('/journals', getJournalEntries);
-router.get('/journals/:id', getJournalEntryById);
-router.put('/journals/:id', updateJournalEntry);
-router.delete('/journals/:id', deleteJournalEntry);
+router.post('/', createJournalEntry);
+router.get('/', getJournalEntries);
+router.get('/:id', getJournalEntryById);
+router.put('/:id', updateJournalEntry);
+router.delete('/:id', deleteJournalEntry);
 
 export default router;

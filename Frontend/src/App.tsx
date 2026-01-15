@@ -1,35 +1,58 @@
 import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import './App.css'
 import GroupsList from "./pages/GroupsList";
 import GroupPage from "./pages/Group";
 import Evenements from "./pages/Evenements";
 import Ressources from "./pages/Ressources";
+import Navbar from "./components/Navbar";
+import Home from "./pages/index.tsx";
+import RegisterPage from './pages/RegisterPage.tsx';
 
 
-type Page =
+export type Page =
+  | { name: "home"}
   | { name: "groups" }
   | { name: "group"; groupId: number }
   | { name: "events" }
-  | { name: "ressources" };
+  | { name: "ressources" }
+  | { name: "register" }
+  | { name: "chat"; discussionId: number; userId: number };
 
 function App() {
-   const [page, setPage] = useState<Page>({ name: "groups" });
+   const [page, setPage] = useState<Page>({ name: "home" });
+   const [isLoggedIn, setIsLoggedIn] = useState(false);
+   const [user, setUser] = useState<{ prenom: string; id?: number; professionnel?: boolean } | undefined>(undefined);
+
+   const handleLogin = (userData: { prenom: string; id?: number; professionnel?: boolean }) => {
+      setIsLoggedIn(true);
+      setUser(userData);
+      setPage({ name: "home" });
+    };
+    const handleLogout = () => {
+      setIsLoggedIn(false);
+      setUser(undefined);
+      setPage({ name: "home" });
+    };
 
   return (
       <>
-        <nav>
-          <button onClick={() => setPage({name: "groups"})}>Groupes</button>
-          <button onClick={() => setPage({name: "events"})}>Évènements</button>
-          <button onClick={() => setPage({name: "ressources"})}>Ressources</button>
-        </nav>
+        <Navbar navigate={setPage} />
 
-        {page.name === "groups" && (
-          <GroupsList onSelectGroup={id =>
-            setPage({name : "group", groupId: id})
-          }/>
+        {page.name === "home" && (
+          <Home
+            isLoggedIn={isLoggedIn}
+            user={user}
+            onLogin={handleLogin}
+            onLogout={handleLogout}
+            navigate={setPage}
+          />
         )}
+
+      {page.name === "groups" && (
+        <GroupsList onSelectGroup={id =>
+          setPage({ name: "group", groupId: id })
+        }/>
+      )}
       {page.name === "group" && (
         <GroupPage
           groupId={page.groupId}
@@ -38,31 +61,13 @@ function App() {
       )}
       {page.name === "events" && <Evenements />}
       {page.name === "ressources" && <Ressources />}
-      </>
+      {page.name === "register" && (
+        <RegisterPage
+          onRegisterSuccess={() => setPage({ name: "home" })}
+          onNavigateToLogin={() => setPage({ name: "home" })}
+        />
+     )}
+    </>
   )
 }
-
 export default App
-
-// <>
-//   <div>
-//     <a href="https://vite.dev" target="_blank">
-//       <img src={viteLogo} className="logo" alt="Vite logo" />
-//     </a>
-//     <a href="https://react.dev" target="_blank">
-//       <img src={reactLogo} className="logo react" alt="React logo" />
-//     </a>
-//   </div>
-//   <h1>Vite + React</h1>
-//   <div className="card">
-//     <button onClick={() => setCount((count) => count + 1)}>
-//       count is {count}
-//     </button>
-//     <p>
-//       Edit <code>src/App.tsx</code> and save to test HMR
-//     </p>
-//   </div>
-//   <p className="read-the-docs">
-//     Click on the Vite and React logos to learn more
-//   </p>
-// </>

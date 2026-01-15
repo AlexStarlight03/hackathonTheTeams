@@ -189,7 +189,7 @@ export async function deleteEvenement(req: Request, res: Response) {
 }
 
 export async function getEvenementsByGroupId(req: Request, res: Response) {
-    const groupId  = Number(req.params.groupId);
+    const groupId  = Number(req.params.id);
     try {
         const evenements = await prisma.evenement.findMany({
             where: { groupeId: groupId }
