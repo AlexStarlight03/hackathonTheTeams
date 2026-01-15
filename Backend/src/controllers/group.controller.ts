@@ -12,9 +12,9 @@ export const createGroup= async(req: Request, res: Response)=>{
             message: 'Tous les champs sont requis'
         });
     }
-
+    const id = Number(createurId);
     const createur = await prisma.user.findUnique({
-        where: { id: createurId }
+        where: { id }
     });
 
     if(!createur){
@@ -28,7 +28,11 @@ export const createGroup= async(req: Request, res: Response)=>{
         data: {createurId, nom, description}
     })
 
-    res.json(newgroup)
+    res.status(200).json({
+        success: true,
+        data: newgroup,
+        message: `L'utilisateur ${createurId} inscrit avec succès dans le groupe`
+    })
 } 
 
 export const joinGroup = async(req: Request, res: Response) =>{

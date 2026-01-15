@@ -12,7 +12,7 @@ import {
 
 const router = Router();
 
-router.get('/' , authenticate, getAllUsers);
+router.get('/', getAllUsers);
 router.get('/:id' , authenticate, getUserById);
 router.post('/' , createUser);
 router.put('/:id' , authenticate, updateUser);

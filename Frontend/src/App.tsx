@@ -21,18 +21,19 @@ export type Page =
 function App() {
    const [page, setPage] = useState<Page>({ name: "home" });
    const [isLoggedIn, setIsLoggedIn] = useState(false);
-   const [user, setUser] = useState<{ prenom: string; id?: number; professionnel?: boolean } | undefined>(undefined);
+   const [user, setUser] = useState<{ prenom: string; email: string; id?: number; professionnel?: boolean } | undefined>(undefined);
 
-   const handleLogin = (userData: { prenom: string; id?: number; professionnel?: boolean }) => {
-      setIsLoggedIn(true);
-      setUser(userData);
-      setPage({ name: "home" });
-    };
-    const handleLogout = () => {
-      setIsLoggedIn(false);
-      setUser(undefined);
-      setPage({ name: "home" });
-    };
+  const handleLogin = (userData: { prenom: string; email: string; id?: number; professionnel?: boolean }) => {
+    setIsLoggedIn(true);
+    setUser(userData);
+    setPage({ name: "home" });
+  };
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(undefined);
+    localStorage.removeItem("token");
+    setPage({ name: "home" });
+  };
 
   return (
       <>

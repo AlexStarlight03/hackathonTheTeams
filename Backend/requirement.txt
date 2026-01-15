@@ -2,11 +2,9 @@
 npm init -y
 npm install express jsonwebtoken cors dotenv bcrypt prisma @prisma/client
 npm install @prisma/adapter-neon
+npm install -g typescript
 npm install --save-dev tsx
 npm install -D typescript ts-node-dev @types/node @types/express @types/jsonwebtoken @types/bcrypt @types/cors
-npm install -D @types/express
-npm install express
-npm install -g typescript
 
 /racine
 npm create vite@latest frontend -- --template react-ts

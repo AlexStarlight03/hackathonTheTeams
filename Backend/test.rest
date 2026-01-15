@@ -11,3 +11,9 @@ Content-Type: application/json
   "password": "test1234",
   "professionnel": "je suis professionnel"
 }
+
+###
+GET http://localhost:3000/users
+
+###
+GET http://localhost:3000/professionnels

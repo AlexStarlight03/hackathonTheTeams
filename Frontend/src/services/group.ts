@@ -28,10 +28,8 @@ export type CreateGroupPayload = {
 
 export const createGroup = async (payload: CreateGroupPayload): Promise<Group> => {
     const res = await fetch(`${API_BASE_URL}/groups`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
     });
     if (!res.ok) {
