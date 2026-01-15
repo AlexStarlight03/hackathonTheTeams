@@ -7,6 +7,7 @@ import EvenementCard from "../components/EvenementCard";
 export default function EvenementsList() {
     const [evenements, setEvenements] = useState<Evenement[]>([]);
     const [search, setSearch] = useState("");
+    const [searchInput, setSearchInput] = useState("");
 
     useEffect(() => {
         getAllEvenements().then(setEvenements);
@@ -27,9 +28,10 @@ export default function EvenementsList() {
             <h1>Évènements</h1>
             <input
             placeholder="Rechercher un événement"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             />
+            <button onClick={() => setSearch(searchInput)} >Rechercher</button>
             {filteredEvenements.map((evenement) => (
                 <div>
                     <EvenementCard evenement={evenement} />

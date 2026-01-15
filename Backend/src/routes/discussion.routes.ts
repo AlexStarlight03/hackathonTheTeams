@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth.middleware';
 import { 
     getAllDiscussion,
     getDiscussionByUserId,
@@ -7,17 +6,19 @@ import {
     postNewPrivateDiscussion,
     postNewGroupDiscussion,
     updateDiscussion,
-    deleteDiscussion
+    deleteDiscussion,
+    getDiscussionById
 } from '../controllers/discussion.controller';
 
 const router = Router();
 
-router.get('/discussions', getAllDiscussion);
-router.get('/discussions/user/:userId', getDiscussionByUserId);
-router.get('/discussions/group/:groupId', getDiscussionByGroupId);
-router.post('/discussions/private', postNewPrivateDiscussion);
-router.post('/discussions/group', postNewGroupDiscussion);
-router.put('/discussions/:id', updateDiscussion);
-router.delete('/discussions/:id', deleteDiscussion);
+router.get('/', getAllDiscussion);
+router.get('/user/:userId', getDiscussionByUserId);
+router.get('/group/:groupId', getDiscussionByGroupId);
+router.post('/private', postNewPrivateDiscussion);
+router.post('/group', postNewGroupDiscussion);
+router.put('/:id', updateDiscussion);
+router.get('/:id', getDiscussionById);
+router.delete('/:id', deleteDiscussion);
 
 export default router;

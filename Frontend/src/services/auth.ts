@@ -40,7 +40,7 @@ export function isUserProfessional(): boolean {
 }
 
 export function login(email: string, password: string) {
-    return fetch(`${API_BASE_URL}/login`, {
+    return fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"},
@@ -49,14 +49,14 @@ export function login(email: string, password: string) {
     .then(data => {
         if (data.token) {
             localStorage.setItem("token", data.token);
-            return true;
+            return {success: true, user: data.user};
         }
-        return false;
+        return { success: false, message: data.message || "Erreur de connexion" };
     });
 }
 
 export function register(nom: string, prenom: string, email: string, password: string) {
-    return fetch(`${API_BASE_URL}/register`, {
+    return fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -73,7 +73,7 @@ export function register(nom: string, prenom: string, email: string, password: s
 
 export function logout() {
     localStorage.removeItem("token");
-    return fetch(`${API_BASE_URL}/logout`, {
+    return fetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
     }).then(res => res.json());
 }
