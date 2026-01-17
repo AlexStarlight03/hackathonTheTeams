@@ -6,16 +6,16 @@ import type { Request, Response } from "express";
  */
 export async function newMessage(req: Request, res: Response) {
   try {
-    const { id_discussion, message, emmeteurId } = req.body;
+    const  discussionId  = Number(req.params.discussionId);
+    const { message, emmeteurId } = req.body;
 
     // Validation
-    if (!id_discussion || !message || !emmeteurId) {
+    if (!discussionId || !message || !emmeteurId) {
       return res.status(400).json({ 
         error: 'Les champs id_discussion, message et emmeteurId sont requis' 
       });
     }
 
-    const discussionId = parseInt(id_discussion);
     const emetteurIdInt = parseInt(emmeteurId);
 
     if (isNaN(discussionId) || isNaN(emetteurIdInt)) {
@@ -80,7 +80,7 @@ export async function newMessage(req: Request, res: Response) {
  */
 export async function getMessagesByDiscussion(req: Request, res: Response) {
   try {
-    const { discussionId } = req.params;
+    const discussionId  = req.params.discussionId;
     const discussionIdInt = parseInt(discussionId as string);
 
     if (isNaN(discussionIdInt)) {

@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createRessource } from "../services/ressource";
-import { getProfessionnelById } from "../services/professionnel";
 
 type Props = {
     userId: number;

@@ -1,41 +1,54 @@
 import { useEffect, useState } from "react";
 import { getGroupById, joinGroup, leaveGroup , addModerateur, deleteModerateur, deleteGroup} from "../services/group";
 import { getEvenementsByGroupId } from "../services/evenement";
-import type { Group, Evenement } from "../types";
+import type { Group, Evenement, FilDiscussion } from "../types";
 import { getUserIdFromToken } from "../services/auth";
 import CreateEvenementForm from "../components/CreateEvenementForm";
+import CreateDiscussionForm from "../components/CreateDiscussionForm";
+import { getFilDiscussionsByGroupId} from "../services/filDiscussion";
+import DiscussionCard from "../components/DiscussionCard";
+import EvenementCard from "../components/EvenementCard";
 
 type Props = {
     groupId: number;
     onBack: () => void;
+    navigate: (page: any) => void;
 };
 
-export default function GroupPage({ groupId, onBack }: Props) {
+export default function GroupPage({ groupId, onBack, navigate }: Props) {
    const [group, setGroup] = useState<Group | null>(null);
    const [evenements, setEvenements] = useState<Evenement[]>([]);
+   const [discussions, setDiscussions] = useState<FilDiscussion[]>([]);
    const [loading, setLoading] = useState(true);
    const [showCreateEvenementForm, setShowCreateEvenementForm] = useState(false);
+   const [showCreateDiscussionForm, setShowCreateDiscussionForm] = useState(false);
 
    const userId = getUserIdFromToken();
 
    const isModerator = group?.moderateurs?.some((mod) => mod.id === userId);
    const isLoggedIn = !!localStorage.getItem("token");
-   const isCreateur = group?.createur?.id === userId;
+   const isCreateur = group?.createurId === userId;
 
     const loadData = async () => {
         setLoading(true);
-        const [groupData, evenementsData] = await Promise.all([
+        const [groupData, evenementsData, discussionsData] = await Promise.all([
             getGroupById(groupId),
             getEvenementsByGroupId(groupId),
+            getFilDiscussionsByGroupId(groupId)
         ]);
         setGroup(groupData);
         setEvenements(evenementsData);
+        setDiscussions(discussionsData);
         setLoading(false);
     };
 
     useEffect(() => {
         loadData();
     }, [groupId]);
+
+    useEffect(() => {
+        console.log("Discussions loaded:", discussions);
+    }, [discussions]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -44,6 +57,7 @@ export default function GroupPage({ groupId, onBack }: Props) {
         return <div>Group not found</div>;
     }
 
+    const membres = Array.isArray(group?.membres) ? group.membres : [];
     const isMember = group.membres?.some((membre) => membre.id === userId);
 
     return (
@@ -74,9 +88,9 @@ export default function GroupPage({ groupId, onBack }: Props) {
             )}
 
             {/*Membres*/}
-            <h3>Membres ({group.membres?.length ?? 0})</h3>
+            <h3>Membres ({membres.length})</h3>
             <ul>
-                {group.membres?.map((membre) => (
+                {membres.map((membre) => (
                     <li key={membre.id}>
                         {membre.prenom} {membre.nom}
                     </li>
@@ -102,6 +116,39 @@ export default function GroupPage({ groupId, onBack }: Props) {
                     Ne plus être Modérateur du groupe
                 </button>
             )}
+             {/*Discussions*/}
+            <h3>Fils du discussions du groupe</h3>
+            {/*Membres seulement*/}
+            {isLoggedIn && isMember && (
+                <>
+                {!showCreateDiscussionForm && (
+                    <button onClick={() => setShowCreateDiscussionForm(true)}>
+                        Créer un nouveau fil de discussion
+                    </button>
+                )}
+                {showCreateDiscussionForm && (
+                <CreateDiscussionForm
+                    groupId = {group.id}
+                    userId={userId}
+                    onCreate={() => {
+                        setShowCreateDiscussionForm(false);
+                        loadData();
+                    }}
+                    onCancel={() => setShowCreateDiscussionForm(false)}
+                    />
+                    )}
+                </>
+            )}
+            {discussions.length === 0 && <p>Aucun fil de discussion</p>}
+
+            {discussions.map((discussion) => (
+                <DiscussionCard
+                    key={discussion.id}
+                    discussion={discussion}
+                    onChange={loadData}
+                    navigate={navigate}
+                />
+            ))}
             {/*Événements*/}
             <h3>Événements du groupe</h3>
             {/*Moderateurs seulement*/}
@@ -119,6 +166,7 @@ export default function GroupPage({ groupId, onBack }: Props) {
                     onCreate={() => {
                         setShowCreateEvenementForm(false);
                         loadData();
+                        getFilDiscussionsByGroupId(group.id).then(setDiscussions);
                     }}
                     onCancel={() => setShowCreateEvenementForm(false)}
                     />
@@ -128,11 +176,7 @@ export default function GroupPage({ groupId, onBack }: Props) {
             {evenements.length === 0 &&  <p>Aucun événement</p>}
 
             {evenements.map((evenement) => (
-                <div key={evenement.id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-                    <h4>{evenement.nom}</h4>
-                    <p>{new Date(evenement.date).toLocaleString()}</p>
-                    <p>{evenement.description}</p>
-                    </div>
+                <EvenementCard key={evenement.id} evenement={evenement} />
             ))}
         </div>
     );

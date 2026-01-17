@@ -1,6 +1,5 @@
 import type { MessagesResponse, Message } from "../types/message";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_BASE_URL } from "../config";
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
@@ -13,7 +12,7 @@ export async function getMessagesByDiscussion(
   limit = 50
 ): Promise<MessagesResponse> {
   const res = await fetch(
-    `${API_URL}/messages/discussion/${discussionId}?page=${page}&limit=${limit}`,
+    `${API_BASE_URL}/messages/${discussionId}?page=${page}&limit=${limit}`,
     { headers: authHeaders() }
   );
 
@@ -26,18 +25,21 @@ export async function sendMessage(data: {
   message: string;
   emmeteurId: number;
 }): Promise<Message> {
-  const res = await fetch(`${API_URL}/messages`, {
+  const res = await fetch(`${API_BASE_URL}/messages/${data.id_discussion}`, {
     method: "POST",
     headers: authHeaders(),
-    body: JSON.stringify(data),
-  });
+    body: JSON.stringify({
+    message: data.message,
+    emmeteurId: data.emmeteurId,
+  }),
+});
 
   if (!res.ok) throw new Error("Erreur envoi message");
   return res.json();
 }
 
 export async function deleteMessage(messageId: number) {
-  const res = await fetch(`${API_URL}/messages/${messageId}`, {
+  const res = await fetch(`${API_BASE_URL}/messages/${messageId}`, {
     method: "DELETE",
     headers: authHeaders(),
   });

@@ -4,12 +4,13 @@ import type { FilDiscussion } from './filDiscussion';
 
 export interface Group {
     id : number;
-    createurId : User['id'];
+    createurId : number;
     nom : string;
     description : string;
     dateCreation : string; // ISO date string
     membres : User[];
     moderateurs : User[];
+    new_inscription: boolean;
     evenementsIds : Evenement[];
     discussions : FilDiscussion[];
 }

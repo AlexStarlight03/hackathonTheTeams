@@ -7,6 +7,7 @@ import Ressources from "./pages/Ressources";
 import Navbar from "./components/Navbar";
 import Home from "./pages/index.tsx";
 import RegisterPage from './pages/RegisterPage.tsx';
+import ChatPage from "./pages/ChatPage";
 
 
 export type Page =
@@ -58,6 +59,7 @@ function App() {
         <GroupPage
           groupId={page.groupId}
           onBack={() => setPage({ name: "groups" })}
+          navigate={setPage}
         />
       )}
       {page.name === "events" && <Evenements />}
@@ -66,8 +68,13 @@ function App() {
         <RegisterPage
           onRegisterSuccess={() => setPage({ name: "home" })}
           onNavigateToLogin={() => setPage({ name: "home" })}
-        />
-     )}
+        />)}
+     {page.name === "chat" && (
+        <ChatPage
+          discussionId={page.discussionId}
+          userId={page.userId}
+          />
+      )}
     </>
   )
 }

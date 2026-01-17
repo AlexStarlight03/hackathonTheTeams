@@ -17,3 +17,12 @@ GET http://localhost:3000/users
 
 ###
 GET http://localhost:3000/professionnels
+
+###
+GET http://localhost:3000/discussions
+
+###
+GET http://localhost:3000/discussions/group/10
+
+###
+GET http://localhost:3000/messages/1
