@@ -1,6 +1,6 @@
 import type { Evenement } from "../types";
 
-export default function GroupCard({ evenement }: { evenement: Evenement }) {
+export default function EvenementCard({ evenement }: { evenement: Evenement }) {
     return (
         <div className="event-card">
             <h2>{evenement.nom}</h2>

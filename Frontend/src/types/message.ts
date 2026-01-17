@@ -1,10 +1,12 @@
 
-export interface User {
-  id: number;
-  nom: string;
-  prenom: string;
-  email: string;
-}
+// export interface User {
+//   id: number;
+//   nom: string;
+//   prenom: string;
+//   email: string;
+// }
+
+import type { User } from './user';
 
 export interface Message {
   id: number;

@@ -19,7 +19,6 @@ export function useMessages(discussionId: number, userId: number) {
       message: content,
       emmeteurId: userId,
     });
-
     setMessages((prev) => [...prev, newMsg]);
   };
 

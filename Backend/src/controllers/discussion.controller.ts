@@ -20,7 +20,15 @@ export async function getAllDiscussion(req: Request, res: Response) {
           select: {
             id: true,
             nom: true,
-            description: true
+            description: true,
+            membres: {
+              select: {
+                id: true,
+                nom: true,
+                prenom: true,
+                email: true
+              }
+            }
           }
         },
         messages: {
@@ -71,7 +79,15 @@ export async function getDiscussionById(req: Request, res: Response) {
           select: {
             id: true,
             nom: true,
-            description: true
+            description: true,
+            membres: {
+              select: {
+                id: true,
+                nom: true,
+                prenom: true,
+                email: true
+              }
+            }
           }
         },
         messages: {
@@ -134,7 +150,15 @@ export async function getDiscussionByUserId(req: Request, res: Response) {
           select: {
             id: true,
             nom: true,
-            description: true
+            description: true,
+            membres: {
+              select: {
+                id: true,
+                nom: true,
+                prenom: true,
+                email: true
+              }
+            }
           }
         },
         messages: {
@@ -192,7 +216,15 @@ export async function getDiscussionByGroupId(req: Request, res: Response) {
           select: {
             id: true,
             nom: true,
-            description: true
+            description: true,
+            membres: {
+              select: {
+                id: true,
+                nom: true,
+                prenom: true,
+                email: true
+              }
+            }
           }
         },
         messages: {
@@ -279,18 +311,17 @@ export async function postNewPrivateDiscussion(req: Request, res: Response) {
  */
 export async function postNewGroupDiscussion(req: Request, res: Response) {
   try {
-    const { titre, groupeId, participantIds } = req.body;
+    const groupeId = Number(req.params.groupId);
+    const { titre, participantIds } = req.body;
 
     // Validation
     if (!groupeId) {
       return res.status(400).json({ error: 'L\'ID du groupe est requis' });
     }
 
-    const groupeIdInt = parseInt(groupeId);
-
     // Vérifier que le groupe existe
     const groupe = await prisma.group.findUnique({
-      where: { id: groupeIdInt },
+      where: { id: groupeId },
       include: {
         membres: true
       }
@@ -320,7 +351,7 @@ export async function postNewGroupDiscussion(req: Request, res: Response) {
     const discussion = await prisma.filDiscussion.create({
       data: {
         titre: titre || null,
-        groupeId: groupeIdInt,
+        groupeId: groupeId,
         participants: {
           connect: finalParticipantIds.map((id: number) => ({ id }))
         }
@@ -338,7 +369,15 @@ export async function postNewGroupDiscussion(req: Request, res: Response) {
           select: {
             id: true,
             nom: true,
-            description: true
+            description: true,
+            membres: {
+              select: {
+                id: true,
+                nom: true,
+                prenom: true,
+                email: true
+              }
+            }
           }
         }
       }
@@ -410,9 +449,17 @@ export async function updateDiscussion(req: Request, res: Response) {
           select: {
             id: true,
             nom: true,
-            description: true
+            description: true,
+            membres: {
+              select: {
+                id: true,
+                nom: true,
+                prenom: true,
+                email: true
+              }
+            }
           }
-        }
+        },
       }
     });
 

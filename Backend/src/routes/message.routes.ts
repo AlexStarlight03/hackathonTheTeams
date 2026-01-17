@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.post('/', authenticate, newMessage);
+router.post('/:discussionId', authenticate, newMessage);
 router.get('/:discussionId', authenticate, getMessagesByDiscussion);
 router.delete('/:messageId', authenticate, deleteMessage);
 

@@ -4,8 +4,9 @@ import type { Message } from './message';
 
 export interface FilDiscussion {
   id: number;
-  title: string;
-  groupe?: Group | null;
+  titre: string;
+  groupeId?: number | null;
   participants: User[];
+  groupe?: Group | null;
   messages: Message[];
 }

@@ -16,8 +16,8 @@ router.get('/', getAllDiscussion);
 router.get('/user/:userId', getDiscussionByUserId);
 router.get('/group/:groupId', getDiscussionByGroupId);
 router.post('/private', postNewPrivateDiscussion);
-router.post('/group', postNewGroupDiscussion);
-router.put('/:id', updateDiscussion);
+router.post('/group/:groupId', postNewGroupDiscussion);
+router.patch('/:id', updateDiscussion);
 router.get('/:id', getDiscussionById);
 router.delete('/:id', deleteDiscussion);
 
