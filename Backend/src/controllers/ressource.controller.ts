@@ -1,15 +1,6 @@
 import prisma from '../prisma/prisma';
 import type { Request, Response } from "express";
 
-// model Ressource {
-//   id             Int    @id @default(autoincrement())
-//   professionalId Int
-//   nom            String @db.VarChar(125)
-//   description    String
-
-//   professionnel Professionnel @relation(fields: [professionalId], references: [id])
-
-// }
 
 export async function  createRessource (req: Request, res: Response) {
     const id = Number(req.params.userId);
@@ -39,7 +30,8 @@ export async function  createRessource (req: Request, res: Response) {
                 professionalId,
                 nom,
                 description
-            }
+            },
+            include: { professionnel: true }
         });
         return res.status(200).json({
         success: true,
@@ -149,7 +141,9 @@ export async function  deleteRessource (req: Request, res: Response) {
 }
 
 export async function  getAllRessources (req: Request, res: Response) {
-    const ressources =  await prisma.ressource.findMany();
+    const ressources = await prisma.ressource.findMany({
+        include: { professionnel: true }
+    });
     return res.status(200).json({
         success: true,
         data: ressources
@@ -159,7 +153,8 @@ export async function  getAllRessources (req: Request, res: Response) {
 export async function  getRessourceById (req: Request, res: Response) {
     const idRessource = Number(req.params.id);
     const ressource =  await prisma.ressource.findUnique({
-        where: { id: idRessource }
+        where: { id: idRessource },
+        include: { professionnel: true }
     });
     if (!ressource) {
         return res.status(404).json({

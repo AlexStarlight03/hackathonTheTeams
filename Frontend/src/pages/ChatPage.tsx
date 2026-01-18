@@ -25,16 +25,16 @@ export default function ChatPage({ discussionId, userId }: Props) {
   if (loading || loadingDiscussion) return <p>Chargement...</p>;
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-4 border-b bg-gray-100">
-        <h2 className="text-xl font-bold">
+    <div className="chat-page-container">
+      <div className="chat-header">
+        <h2>
           {discussion?.titre || "Discussion"}
         </h2>
       </div>
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="chat-messages">
         <MessageList messages={messages} userId={userId} />
       </div>
-      <div className="p-4 border-t">
+      <div className="chat-input">
         <MessageInput onSend={send} />
       </div>
     </div>

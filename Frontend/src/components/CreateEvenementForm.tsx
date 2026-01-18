@@ -1,29 +1,44 @@
 import { useState } from "react";
-import { createEvenement } from "../services/evenement";
+import { createEvenement, updateEvenement } from "../services/evenement";
+import type { Evenement } from "../types";
 
 type Props = {
     groupId: number;
     userId: number;
     onCreate: () => void;
     onCancel: () => void;
+    evenement?: Evenement;
 };
 
-export default function CreateEvenementForm({ groupId, userId, onCreate, onCancel}: Props) {
-    const [nom, setNom] = useState("");
-    const [description, setDescription] = useState("");
-    const [date, setDate] = useState("");
+export default function CreateEvenementForm({ groupId, userId, onCreate, onCancel, evenement}: Props) {
+    const [nom, setNom] = useState(evenement?.nom || "");
+    const [description, setDescription] = useState(evenement?.description || "");
+    const [date, setDate] = useState(
+     evenement
+        ? new Date(evenement.date).toISOString().slice(0, 16)
+        : ""
+    );
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        await createEvenement(userId, {
-            nom,
-            description,
-            date,
-            groupeId: groupId,
-        });
+        if (evenement) {
+            await updateEvenement(evenement.id, userId, {
+                nom,
+                description,
+                date,
+                groupeId: groupId,
+            });
+        } else {
+            await createEvenement(userId, {
+                nom,
+                description,
+                date,
+                groupeId: groupId,
+            });
+        }
 
         setNom("");
         setDescription("");

@@ -59,6 +59,12 @@ export default function CreateDiscussionForm({ userId, groupId, participantIds, 
                 if (!ids.includes(userId)) {
                     ids.push(userId);
                 }
+                ids = Array.from(new Set(ids));
+                if (ids.length < 2) {
+                    alert("Veuillez sélectionner au moins 2 participants (vous inclus).");
+                    setLoading(false);
+                    return;
+                }
                 await createPrivateDiscussion(titre, ids);
             }
             setTitre("Discussion");
@@ -82,7 +88,7 @@ export default function CreateDiscussionForm({ userId, groupId, participantIds, 
                         <p>Chargement des utilisateurs...</p>
                     ) : (
                         <ul>
-                            {users.map((user) => (
+                            {(users ?? []).map((user) => (
                                 <li key={user.id}>
                                     {user.prenom} {user.nom} (ID: {user.id})
                                 </li>
@@ -107,6 +113,18 @@ export default function CreateDiscussionForm({ userId, groupId, participantIds, 
                         value={participants}
                         onChange={(e) => setParticipants(e.target.value)}
                         placeholder="ex: 1,2,3"
+                        required
+                    />
+                </label>
+            )}
+            {!groupId && (
+                <label>
+                    A qui envoyer la discussion (ID de la personne):
+                    <input
+                        type="text"
+                        value={participants}
+                        onChange={(e) => setParticipants(e.target.value)}
+                        placeholder="ex: 4"
                         required
                     />
                 </label>

@@ -7,15 +7,16 @@ import {
     deleteEvenement,
     getEvenementsByGroupId
 } from '../controllers/evenement.controller';
+import { authenticate } from '../middleware/auth.middleware';
 
 const router = Router();
 
 
-router.post('/:userId', createEvenement);
+router.post('/:userId', authenticate, createEvenement);
 router.get('/', getAllEvenements);
 router.get('/:id', getEvenementById);
 router.get('/:groupId/evenements', getEvenementsByGroupId);
-router.patch('/:id/:userId', updateEvenement);
-router.delete('/:id/:userId', deleteEvenement);
+router.patch('/:id/:userId', authenticate, updateEvenement);
+router.delete('/:id/:userId', authenticate, deleteEvenement);
 
 export default router;

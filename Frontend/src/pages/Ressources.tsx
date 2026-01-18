@@ -25,35 +25,42 @@ export default function RessourcesList() {
     );
 
     return (
-        <div>
+        <div className="page-container">
             <h1>Ressources</h1>
             {isProfessional && userId && (
                 <>
-                {!showCreateForm && (
-                    <button onClick={() => setShowCreateForm(true)}>Créer une nouvelle ressource</button>
-                )}
-                {showCreateForm && (
-                    <CreateRessourceForm
-                        userId={userId}
-                        onCreate={() => {
-                            setShowCreateForm(false);
-                            getAllRessources().then(setRessources);
-                        }}
-                        onCancel={() => setShowCreateForm(false)}
-                    />
-                )}
+                    {!showCreateForm && (
+                        <button onClick={() => setShowCreateForm(true)}>Créer une nouvelle ressource</button>
+                    )}
+                    {showCreateForm && (
+                        <CreateRessourceForm
+                            userId={userId}
+                            onCreate={() => {
+                                setShowCreateForm(false);
+                                getAllRessources().then(setRessources);
+                            }}
+                            onCancel={() => setShowCreateForm(false)}
+                        />
+                    )}
                 </>
             )}
-            <input
-            placeholder="Rechercher une ressource"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            />
-            <button onClick={() => setSearch(searchInput)} >Rechercher</button>
+            <div className="search-section">
+                <input
+                    className="search-bar"
+                    type="search"
+                    placeholder="Rechercher une ressource"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                />
+                <button className="search-btn" onClick={() => setSearch(searchInput)}>
+                    Rechercher
+                </button>
+            </div>
+            {filteredRessources.length === 0 && (
+                <p>Aucune ressource trouvée.</p>
+            )}
             {filteredRessources.map((ressource) => (
-                <div key={ressource.id}>
-                    <RessourceCard ressource={ressource} />
-                </div>
+                <RessourceCard key={ressource.id} ressource={ressource} />
             ))}
         </div>
     );

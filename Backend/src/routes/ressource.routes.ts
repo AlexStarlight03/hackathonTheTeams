@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authenticate } from "../middleware/auth.middleware";
 import {
     createRessource,
     deleteRessource,
@@ -9,11 +10,11 @@ import {
 
 const router = Router();
 
-router.post('/:userId', createRessource);
+router.post('/:userId', authenticate, createRessource);
 router.get('/', getAllRessources);
 router.get('/:id', getRessourceById);
-router.put('/:id/:userId', updateRessource);
-router.delete('/:id/:userId', deleteRessource);
+router.patch('/:id/:userId', authenticate, updateRessource);
+router.delete('/:id/:userId', authenticate, deleteRessource);
 
 export default router;
 

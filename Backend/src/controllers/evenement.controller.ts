@@ -56,6 +56,9 @@ export async function createEvenement(req: Request, res: Response) {
                 groupeId,
                 date: new Date(date),
                 description
+            },
+            include: {
+                moderateur: true,
             }
         });
         return res.status(200).json({
@@ -74,7 +77,8 @@ export async function getAllEvenements(req: Request, res: Response) {
     try{
         const events = await prisma.evenement.findMany({
             include: {
-                groupe: true
+                groupe: true,
+                moderateur: true
             }
         });
 
@@ -97,7 +101,8 @@ export async function getEvenementById(req: Request, res: Response) {
     const evenement = await prisma.evenement.findUnique({
         where: { id },
         include: {
-            groupe: true
+            groupe: true,
+            moderateur: true
         }
     });
     res.json(evenement);
@@ -152,7 +157,7 @@ export async function updateEvenement(req: Request, res: Response) {
 
 export async function deleteEvenement(req: Request, res: Response) {
     const id = Number(req.params.id);
-    const userId = Number(req.body.userId);
+    const userId = Number(req.params.userId);
 
     // verifier si l'événement existe
     const evenement = await prisma.evenement.findUnique({
@@ -192,7 +197,11 @@ export async function getEvenementsByGroupId(req: Request, res: Response) {
     const groupId  = Number(req.params.id);
     try {
         const evenements = await prisma.evenement.findMany({
-            where: { groupeId: groupId }
+            where: { groupeId: groupId },
+            include: {
+                moderateur: true,
+                groupe: true
+            }
         });
         return res.status(200).json({
             success: true,

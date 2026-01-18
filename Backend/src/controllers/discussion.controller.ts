@@ -124,19 +124,26 @@ export async function getDiscussionByUserId(req: Request, res: Response) {
   try {
     const { userId } = req.params;
     const userIdInt = parseInt(userId as string);
+    const { type } = req.query;
 
     if (isNaN(userIdInt)) {
       return res.status(400).json({ error: 'ID utilisateur invalide' });
     }
 
+        let where: any = {
+      participants: {
+        some: { id: userIdInt }
+      }
+    };
+
+    if (type === "group") {
+      where.groupeId = { not: null };
+    } else if (type === "private") {
+      where.groupeId = null;
+    }
+
     const discussions = await prisma.filDiscussion.findMany({
-      where: {
-        participants: {
-          some: {
-            id: userIdInt
-          }
-        }
-      },
+      where,
       include: {
         participants: {
           select: {

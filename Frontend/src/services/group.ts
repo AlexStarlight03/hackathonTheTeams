@@ -27,9 +27,12 @@ export type CreateGroupPayload = {
 }
 
 export const createGroup = async (payload: CreateGroupPayload): Promise<Group> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/groups`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
         body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -40,8 +43,12 @@ export const createGroup = async (payload: CreateGroupPayload): Promise<Group> =
 };
 
 export const joinGroup = async (groupId: number, userId: number): Promise<Group> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/groups/${groupId}/join/${userId}`, {
         method: 'POST',
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
     });
     if (!res.ok) {
         throw new Error('Network response was not ok');
@@ -51,8 +58,12 @@ export const joinGroup = async (groupId: number, userId: number): Promise<Group>
 };
 
 export const leaveGroup = async (groupId: number, userId: number): Promise<Group> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/groups/${groupId}/leave/${userId}`, {
         method: 'POST',
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
     });
     if (!res.ok) {
         throw new Error('Network response was not ok');
@@ -62,8 +73,12 @@ export const leaveGroup = async (groupId: number, userId: number): Promise<Group
 };
 
 export const addModerateur = async (groupId: number, userId: number): Promise<Group> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/groups/${groupId}/addmod/${userId}`, {
         method: 'POST',
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
     });
     if (!res.ok) {
         throw new Error('Network response was not ok');
@@ -73,8 +88,12 @@ export const addModerateur = async (groupId: number, userId: number): Promise<Gr
 };
 
 export const deleteModerateur = async (groupId: number, userId: number): Promise<Group> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/groups/${groupId}/deletemod/${userId}`, {
         method: 'POST',
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
     });
     if (!res.ok) {
         throw new Error('Network response was not ok');
@@ -90,9 +109,12 @@ export type UpdateGroupPayload = {
 }
 
 export const updateGroup = async (id: number, userId: number, payload: UpdateGroupPayload): Promise<Group> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/groups/${id}/${userId}`, {
         method: 'PATCH',
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -103,8 +125,12 @@ export const updateGroup = async (id: number, userId: number, payload: UpdateGro
 };
 
 export const deleteGroup = async (id: number, userId: number): Promise<{ message: string }> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/groups/${id}/${userId}`, {
         method: 'DELETE',
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
     });
     if (!res.ok) {
         throw new Error('Network response was not ok');

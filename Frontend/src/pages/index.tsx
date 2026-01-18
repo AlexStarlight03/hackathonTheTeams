@@ -39,7 +39,7 @@ export default function Home({ isLoggedIn, user, onLogin, onLogout, navigate }: 
             await createProfessionnel(user.id, qualifications);
             const loginRes = await login(user.email, password);
             if (loginRes && loginRes.success) {
-                onLogin(loginRes.user); // This will update your state and token
+                onLogin(loginRes.user);
             }
             setShowQualiInput(false);
         } catch (err) {
@@ -86,7 +86,10 @@ export default function Home({ isLoggedIn, user, onLogin, onLogout, navigate }: 
                 <button onClick={() => navigate({ name: "groups" })}>Voir les groupes</button>
                 <button onClick={() => navigate({ name: "events" })}>Voir les évènements</button>
                 <button onClick={() => navigate({ name: "ressources" })}>Voir les ressources</button>
-                {isLoggedIn && (<button onClick={() => navigate({name: "dashboard"})}>Mon Profil</button>)}
+                {isLoggedIn && user?.id && (
+                    <button onClick={() => navigate({ name: "dashboard", userId: user.id })}>
+                        Mon Profil
+                    </button>)}
             </div>
 
             {showQualifInput && (

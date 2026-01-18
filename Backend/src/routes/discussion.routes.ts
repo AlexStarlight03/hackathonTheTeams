@@ -9,16 +9,17 @@ import {
     deleteDiscussion,
     getDiscussionById
 } from '../controllers/discussion.controller';
+import { authenticate } from '../middleware/auth.middleware';
 
 const router = Router();
 
 router.get('/', getAllDiscussion);
-router.get('/user/:userId', getDiscussionByUserId);
+router.get('/:userId', authenticate, getDiscussionByUserId);
 router.get('/group/:groupId', getDiscussionByGroupId);
-router.post('/private', postNewPrivateDiscussion);
-router.post('/group/:groupId', postNewGroupDiscussion);
-router.patch('/:id', updateDiscussion);
+router.post('/private', authenticate, postNewPrivateDiscussion);
+router.post('/group/:groupId', authenticate, postNewGroupDiscussion);
+router.patch('/:id', authenticate, updateDiscussion);
 router.get('/:id', getDiscussionById);
-router.delete('/:id', deleteDiscussion);
+router.delete('/:id', authenticate, deleteDiscussion);
 
 export default router;

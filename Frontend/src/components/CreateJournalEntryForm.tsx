@@ -7,7 +7,7 @@ type Props = {
     onCancel: () => void;
 };
 
-export default function CreateJournalEntry({ userId, onCreate, onCancel }: Props) {
+export default function CreateJournalEntryForm({ userId, onCreate, onCancel }: Props) {
     const [humeur, setHumeur] = useState("");
     const [energie, setEnergie] = useState("");
     const [sommeil, setSommeil] = useState("");
