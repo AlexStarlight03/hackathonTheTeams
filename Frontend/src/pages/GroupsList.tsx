@@ -29,7 +29,7 @@ export default function GroupsList({ onSelectGroup }: Props) {
     );
 
     return (
-        <div>
+        <div className="page-container">
             <h1>Groupes</h1>
             {isProfessional && userId && (
                 <>
@@ -48,24 +48,32 @@ export default function GroupsList({ onSelectGroup }: Props) {
                 )}
                 </>
             )}
-            <input
-            placeholder="Rechercher un groupe"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            />
-            <label>
+            <div className="search-section">
                 <input
-                    type="checkbox"
-                    checked={openGroups}
-                    onChange={(e) => setOpenGroups(e.target.checked)}
+                    className="search-bar"
+                    type="search"
+                    placeholder="Rechercher un groupe"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                 />
-                Groupes accueillant de nouveaux membres
-            </label>
-            <button onClick={() => setSearch(searchInput)} >Rechercher</button>
-
+                <button className="search-btn" onClick={() => setSearch(searchInput)}>
+                    Rechercher
+                </button>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={openGroups}
+                        onChange={(e) => setOpenGroups(e.target.checked)}
+                    />
+                    Groupes accueillant de nouveaux membres
+                </label>
+            </div>
+            {filteredGroups.length === 0 && (
+                <p>Aucun groupe trouvé.</p>
+            )}
             {filteredGroups.map((group) => (
                 <div key={group.id} onClick={() => onSelectGroup(group.id)} style={{ cursor: "pointer" }}>
-                <GroupCard key={group.id} group={group} />
+                    <GroupCard group={group} />
                 </div>
             ))}
         </div>

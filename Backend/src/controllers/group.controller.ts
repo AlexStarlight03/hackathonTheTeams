@@ -25,7 +25,8 @@ export const createGroup= async(req: Request, res: Response)=>{
     }
 
     const newgroup = await prisma.group.create({
-        data: {createurId, nom, description}
+        data: {createurId, nom, description},
+        include: { createur: true }
     })
 
     res.status(200).json({
@@ -164,7 +165,8 @@ export const getGroups= async(req: Request, res: Response)=>{
         const groups = await prisma.group.findMany({
             include: {
                 membres: true,
-                createur: true
+                createur: true,
+                moderateurs: true
             }
         });
 

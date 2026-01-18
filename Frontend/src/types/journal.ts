@@ -8,5 +8,5 @@ export interface Journal {
     energie: number;
     sommeil: number;
     anxiete: number;
-    journal: String;
+    journal: string;
 }

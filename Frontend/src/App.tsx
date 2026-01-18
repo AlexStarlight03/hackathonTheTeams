@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import GroupsList from "./pages/GroupsList";
 import GroupPage from "./pages/Group";
@@ -8,7 +8,8 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/index.tsx";
 import RegisterPage from './pages/RegisterPage.tsx';
 import ChatPage from "./pages/ChatPage";
-
+import Dashboard from "./pages/Dashboard";
+import DiscussionsList from "./pages/discussions";
 
 export type Page =
   | { name: "home"}
@@ -17,7 +18,9 @@ export type Page =
   | { name: "events" }
   | { name: "ressources" }
   | { name: "register" }
-  | { name: "chat"; discussionId: number; userId: number };
+  | { name: "chat"; discussionId: number; userId: number }
+  | { name: "dashboard"; userId: number }
+  | { name: "discussions"; userId: number };
 
 function App() {
    const [page, setPage] = useState<Page>({ name: "home" });
@@ -36,9 +39,38 @@ function App() {
     setPage({ name: "home" });
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch("/auth/dashboard", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) {
+            setIsLoggedIn(true);
+            setUser(data.user);
+          } else {
+            setIsLoggedIn(false);
+            setUser(undefined);
+            localStorage.removeItem("token");
+          }
+        })
+        .catch(() => {
+          setIsLoggedIn(false);
+          setUser(undefined);
+          localStorage.removeItem("token");
+        });
+    }
+  }, []);
+
   return (
       <>
-        <Navbar navigate={setPage} />
+        <Navbar
+          navigate={setPage}
+          isLoggedIn={isLoggedIn}
+          userId={user?.id}
+        />
 
         {page.name === "home" && (
           <Home
@@ -75,6 +107,14 @@ function App() {
           userId={page.userId}
           />
       )}
+      {page.name === "dashboard" && user?.id && (
+        <Dashboard userId={page.userId} />
+      )}
+      {page.name === "discussions" && user?.id && (
+          <DiscussionsList
+            navigate={setPage}
+          />
+        )}
     </>
   )
 }

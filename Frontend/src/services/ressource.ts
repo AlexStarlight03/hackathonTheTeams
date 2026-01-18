@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../config";
-import type { Professionnel, Ressource } from "../types";
+import type { Ressource } from "../types";
 
 export const getAllRessources = async (): Promise<Ressource[]> => {
     const res = await fetch(`${API_BASE_URL}/ressources`);
@@ -26,9 +26,11 @@ export type CreateRessourcePayload = {
 };
 
 export const createRessource = async (userId: number, payload: CreateRessourcePayload): Promise<Ressource> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/ressources/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
          },
         body: JSON.stringify(payload),
     });
@@ -40,9 +42,12 @@ export const createRessource = async (userId: number, payload: CreateRessourcePa
 };
 
 export const updateRessource = async (id: number, userId: number, payload: Partial<CreateRessourcePayload>): Promise<Ressource> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/ressources/${id}/${userId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -53,8 +58,12 @@ export const updateRessource = async (id: number, userId: number, payload: Parti
 };
 
 export const deleteRessource = async (id: number, userId: number): Promise<void> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/ressources/${id}/${userId}`, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
     });
     if (!res.ok) {
         throw new Error("Network response was not ok");

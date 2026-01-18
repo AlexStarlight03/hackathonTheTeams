@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getGroupById, joinGroup, leaveGroup , addModerateur, deleteModerateur, deleteGroup} from "../services/group";
-import { getEvenementsByGroupId } from "../services/evenement";
+import { getEvenementsByGroupId, updateEvenement, deleteEvenement } from "../services/evenement";
 import type { Group, Evenement, FilDiscussion } from "../types";
 import { getUserIdFromToken } from "../services/auth";
 import CreateEvenementForm from "../components/CreateEvenementForm";
@@ -22,6 +22,7 @@ export default function GroupPage({ groupId, onBack, navigate }: Props) {
    const [loading, setLoading] = useState(true);
    const [showCreateEvenementForm, setShowCreateEvenementForm] = useState(false);
    const [showCreateDiscussionForm, setShowCreateDiscussionForm] = useState(false);
+   const [editingEvenement, setEditingEvenement] = useState<Evenement | null>(null);
 
    const userId = getUserIdFromToken();
 
@@ -40,6 +41,18 @@ export default function GroupPage({ groupId, onBack, navigate }: Props) {
         setEvenements(evenementsData);
         setDiscussions(discussionsData);
         setLoading(false);
+    };
+
+    const handleEditEvenement = (evenement: Evenement) => {
+        setEditingEvenement(evenement);
+        setShowCreateEvenementForm(true);
+    };
+
+    const handleDeleteEvenement = async (evenement: Evenement) => {
+        if (window.confirm("Supprimer cet événement ?")) {
+            await deleteEvenement(evenement.id, userId);
+            loadData();
+        }
     };
 
     useEffect(() => {
@@ -61,123 +74,138 @@ export default function GroupPage({ groupId, onBack, navigate }: Props) {
     const isMember = group.membres?.some((membre) => membre.id === userId);
 
     return (
-        <div>
-            <button onClick={onBack}>Retour liste des groupes</button>
+        <div className="page-container">
+            <button onClick={onBack}>← Retour à la liste des groupes</button>
             <h1>{group.nom}</h1>
             <p>{group.description}</p>
-            {/* JOIN / LEAVE */}
-            {isLoggedIn && (
-            isMember ? (
-                <button onClick={() => leaveGroup(groupId, userId).then(loadData)}>
-                Quitter le groupe
-                </button>
-            ) : (
-                <button onClick={() => joinGroup(groupId, userId).then(loadData)}>
-                Rejoindre le groupe
-                </button>
-            )
-            )}
-            {isMember && isLoggedIn && isCreateur && (
-                <button
-                    onClick={async () => {
-                        await deleteGroup(groupId, userId);
-                        loadData();
-                    }}>
-                    Supprimer le groupe
-                </button>
-            )}
-
-            {/*Membres*/}
-            <h3>Membres ({membres.length})</h3>
-            <ul>
-                {membres.map((membre) => (
-                    <li key={membre.id}>
-                        {membre.prenom} {membre.nom}
-                    </li>
-                ))}
-            </ul>
-            {isMember && isLoggedIn && !isModerator && (
-                <button
-                    onClick={async () => {
-                        await addModerateur(groupId, userId);
-                        loadData();
-                    }}
-                >
-                    Devenir Modérateur du groupe
-                </button>
-            )}
-            {isMember && isLoggedIn && isModerator && (
-                <button
-                    onClick={async () => {
-                        await deleteModerateur(groupId, userId);
-                        loadData();
-                    }}
-                >
-                    Ne plus être Modérateur du groupe
-                </button>
-            )}
-             {/*Discussions*/}
-            <h3>Fils du discussions du groupe</h3>
-            {/*Membres seulement*/}
-            {isLoggedIn && isMember && (
-                <>
-                {!showCreateDiscussionForm && (
-                    <button onClick={() => setShowCreateDiscussionForm(true)}>
-                        Créer un nouveau fil de discussion
+            <div style={{ marginBottom: "1.5rem" }}>
+                {isLoggedIn && (
+                    isMember ? (
+                        <button onClick={() => leaveGroup(groupId, userId).then(loadData)}>
+                            Quitter le groupe
+                        </button>
+                    ) : (
+                        <button onClick={() => joinGroup(groupId, userId).then(loadData)}>
+                            Rejoindre le groupe
+                        </button>
+                    )
+                )}
+                {isMember && isLoggedIn && isCreateur && (
+                    <button
+                        onClick={async () => {
+                            await deleteGroup(groupId, userId);
+                            loadData();
+                        }}>
+                        Supprimer le groupe
                     </button>
                 )}
-                {showCreateDiscussionForm && (
-                <CreateDiscussionForm
-                    groupId = {group.id}
-                    userId={userId}
-                    onCreate={() => {
-                        setShowCreateDiscussionForm(false);
-                        loadData();
-                    }}
-                    onCancel={() => setShowCreateDiscussionForm(false)}
-                    />
-                    )}
-                </>
-            )}
-            {discussions.length === 0 && <p>Aucun fil de discussion</p>}
+            </div>
 
-            {discussions.map((discussion) => (
-                <DiscussionCard
-                    key={discussion.id}
-                    discussion={discussion}
-                    onChange={loadData}
-                    navigate={navigate}
-                />
-            ))}
-            {/*Événements*/}
-            <h3>Événements du groupe</h3>
-            {/*Moderateurs seulement*/}
-            {isModerator && (
-                <>
-                {!showCreateEvenementForm && (
-                    <button onClick={() => setShowCreateEvenementForm(true)}>
-                        Créer un événement
+            {/* Membres */}
+            <section>
+                <h3>Membres ({membres.length})</h3>
+                <ul>
+                    {membres.map((membre) => (
+                        <li key={membre.id}>
+                            {membre.prenom} {membre.nom}
+                        </li>
+                    ))}
+                </ul>
+                {isMember && isLoggedIn && !isModerator && (
+                    <button
+                        onClick={async () => {
+                            await addModerateur(groupId, userId);
+                            loadData();
+                        }}
+                    >
+                        Devenir Modérateur du groupe
                     </button>
+                )}
+                {isMember && isLoggedIn && isModerator && (
+                    <button
+                        onClick={async () => {
+                            await deleteModerateur(groupId, userId);
+                            loadData();
+                        }}
+                    >
+                        Ne plus être Modérateur du groupe
+                    </button>
+                )}
+            </section>
+
+            {/* Discussions */}
+            <section>
+                <h3>Fils de discussions du groupe</h3>
+                {isLoggedIn && isMember && (
+                    <>
+                        {!showCreateDiscussionForm && (
+                            <button onClick={() => setShowCreateDiscussionForm(true)}>
+                                Créer un nouveau fil de discussion
+                            </button>
+                        )}
+                        {showCreateDiscussionForm && (
+                            <CreateDiscussionForm
+                                groupId={group.id}
+                                userId={userId}
+                                onCreate={() => {
+                                    setShowCreateDiscussionForm(false);
+                                    loadData();
+                                }}
+                                onCancel={() => setShowCreateDiscussionForm(false)}
+                            />
+                        )}
+                    </>
+                )}
+                {discussions.length === 0 && <p>Aucun fil de discussion</p>}
+                {discussions.map((discussion) => (
+                    <DiscussionCard
+                        key={discussion.id}
+                        discussion={discussion}
+                        onChange={loadData}
+                        navigate={navigate}
+                    />
+                ))}
+            </section>
+
+            {/* Événements */}
+        <section>
+            <h3>Événements du groupe</h3>
+            {isModerator && (
+            <>
+                {!showCreateEvenementForm && (
+                <button onClick={() => setShowCreateEvenementForm(true)}>
+                    Créer un événement
+                </button>
                 )}
                 {showCreateEvenementForm && (
                 <CreateEvenementForm
-                    groupId = {group.id}
+                    groupId={group.id}
                     userId={userId}
+                    evenement={editingEvenement || undefined}
                     onCreate={() => {
-                        setShowCreateEvenementForm(false);
-                        loadData();
-                        getFilDiscussionsByGroupId(group.id).then(setDiscussions);
+                    setShowCreateEvenementForm(false);
+                    setEditingEvenement(null);
+                    loadData();
+                    getFilDiscussionsByGroupId(group.id).then(setDiscussions);
                     }}
-                    onCancel={() => setShowCreateEvenementForm(false)}
-                    />
-                    )}
-                </>
+                    onCancel={() => {
+                    setShowCreateEvenementForm(false);
+                    setEditingEvenement(null);
+                    }}
+                />
+                )}
+            </>
             )}
-            {evenements.length === 0 &&  <p>Aucun événement</p>}
-
+            {evenements.length === 0 && <p>Aucun événement</p>}
             {evenements.map((evenement) => (
-                <EvenementCard key={evenement.id} evenement={evenement} />
+            <EvenementCard
+                key={evenement.id}
+                evenement={evenement}
+                onEdit={handleEditEvenement}
+                onDelete={handleDeleteEvenement}
+            />
             ))}
+        </section>
         </div>
     );
 }

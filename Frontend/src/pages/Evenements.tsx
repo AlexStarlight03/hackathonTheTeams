@@ -24,18 +24,25 @@ export default function EvenementsList() {
     ))}
 
     return (
-        <div>
+        <div className="page-container">
             <h1>Évènements</h1>
-            <input
-            placeholder="Rechercher un événement"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            />
-            <button onClick={() => setSearch(searchInput)} >Rechercher</button>
+            <div className="search-section">
+                <input
+                    className="search-bar"
+                    type="search"
+                    placeholder="Rechercher un événement"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                />
+                <button className="search-btn" onClick={() => setSearch(searchInput)}>
+                    Rechercher
+                </button>
+            </div>
+            {filteredEvenements.length === 0 && (
+                <p>Aucun événement trouvé.</p>
+            )}
             {filteredEvenements.map((evenement) => (
-                <div key={evenement.id}>
-                    <EvenementCard evenement={evenement} />
-                </div>
+                <EvenementCard key={evenement.id} evenement={evenement} />
             ))}
         </div>
     );

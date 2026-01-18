@@ -49,18 +49,45 @@ export default function DiscussionCard({ discussion, onChange, navigate }: Props
     return (
         <div className="discussion-card" onClick={handleCardClick} style={{ cursor: isParticipant ? 'pointer' : 'default' }}>
             <h2>{discussion.titre}</h2>
-            {/* <p>{discussion.groupe ? discussion.groupe.nom : ""}</p> */}
             {canJoinOrLeave ? (
-                isParticipant ? (
-                    <button onClick={handleLeave}>Quitter la discussion</button>
-                ) : (
-                    <button onClick={handleJoin}>Rejoindre la discussion</button>
-                )
-            ) : isGroupDiscussion && !isGroupMember? (
-                <p>Vous devez être membre du groupe pour rejoindre cette discussion.</p>
+            isParticipant ? (
+                <div style={{ display: "flex", gap: "1rem" }}>
+                <button
+                    type="button"
+                    onClick={e => {
+                    e.stopPropagation();
+                    handleCardClick();
+                    }}
+                >
+                    Ouvrir la discussion
+                </button>
+                <button
+                    type="button"
+                    onClick={async e => {
+                    e.stopPropagation();
+                    await handleLeave();
+                    }}
+                >
+                    Quitter la discussion
+                </button>
+                </div>
             ) : (
-                <p>Connectez-vous pour rejoindre la discussion.</p>
+                <button
+                    type="button"
+                    onClick={async e => {
+                        e.stopPropagation();
+                        await handleJoin();
+                        handleCardClick();
+                    }}
+                    >
+                    Rejoindre la discussion
+                </button>
+            )
+            ) : isGroupDiscussion && !isGroupMember ? (
+            <p>Vous devez être membre du groupe pour rejoindre cette discussion.</p>
+            ) : (
+            <p>Connectez-vous pour rejoindre la discussion.</p>
             )}
-        </div>
+     </div>
     );
 }

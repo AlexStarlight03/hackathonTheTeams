@@ -11,18 +11,19 @@ import {
   deleteModerateur
 } from '../controllers/group.controller';
 import { getEvenementsByGroupId } from '../controllers/evenement.controller';
+import { authenticate } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.post('/', createGroup);
-router.post('/:groupId/join/:userId',joinGroup);
-router.post('/:groupId/leave/:userId',leaveGroup);
-router.post('/:groupId/addmod/:userId',addModerateur);
-router.post('/:groupId/deletemod/:userId',deleteModerateur);
+router.post('/', authenticate, createGroup);
+router.post('/:groupId/join/:userId', authenticate, joinGroup);
+router.post('/:groupId/leave/:userId',authenticate, leaveGroup);
+router.post('/:groupId/addmod/:userId', authenticate, addModerateur);
+router.post('/:groupId/deletemod/:userId',authenticate, deleteModerateur);
 router.get('/', getGroups);
 router.get('/:id', getGroupById);
-router.patch('/:id/:userId', updateGroup);
-router.delete('/:id/:userId', deleteGroup);
+router.patch('/:id/:userId', authenticate, updateGroup);
+router.delete('/:id/:userId', authenticate, deleteGroup);
 router.get('/:id/evenements', getEvenementsByGroupId);
 
 export default router;

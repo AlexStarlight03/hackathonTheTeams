@@ -4,9 +4,9 @@ import type { Request, Response } from "express";
 
 export async function  createJournalEntry (req: Request, res: Response) {
     try {
+        const userId = Number(req.params.id);
+        if (!userId) return res.status(400).json({ error: 'userId is required' });
         const {
-            userId: _userId,
-            user_id,
             date,
             humeur,
             energie,
@@ -16,8 +16,6 @@ export async function  createJournalEntry (req: Request, res: Response) {
             modification,
         } = req.body;
 
-        const userId = _userId ?? user_id;
-        if (!userId) return res.status(400).json({ error: 'userId is required' });
 
         const toScore = (v: any): number | undefined => {
             if (v === undefined || v === null) return undefined;
@@ -59,20 +57,7 @@ export async function  createJournalEntry (req: Request, res: Response) {
 
 export async function  getJournalEntries (req: Request, res: Response) {
     try {
-        const {
-            userId: _userIdFromQuery,
-        } = req.query as any;
-        const {
-            userId: _userIdFromParams,
-        } = req.params as any;
-        const {
-            userId: _userIdFromBody,
-        } = req.body as any;
-
-        const userId =
-            _userIdFromParams ??
-            _userIdFromQuery ??
-            _userIdFromBody;
+        const userId = Number(req.params.userId);
 
 
         if (!userId) return res.status(400).json({ error: "Utilisateur est requis" });
@@ -104,31 +89,17 @@ export async function  getJournalEntries (req: Request, res: Response) {
 
 export async function  getJournalEntryById (req: Request, res: Response) {
     try {
-        const params = req.params as any;
-        const query = req.query as any;
-        const body = req.body as any;
-
-        const userId =
-            params.userId ??
-            query.userId ??
-            body.userId;
-
-        const journalId =
-            params.journalId ??
-            params.id ??
-            query.journalId ??
-            query.id ??
-            body.journalId ??
-            body.id;
+        const userId = Number(req.params.userId);
+        const id = Number(req.params.id);
 
         if (!userId) return res.status(400).json({ error: "Utilisateur est requis" });
-        if (!journalId) return res.status(400).json({ error: "Id du journal est requis" });
+        if (!id) return res.status(400).json({ error: "Id de l'entr/e est requis" });
 
         const user = await prisma.user.findUnique({ where: { id: userId } });
         if (!user) return res.status(404).json({ error: "'Utilisateur non trouvé'" });
 
         const entry = await prisma.journalEntry.findUnique({
-            where: { id: journalId },
+            where: { id },
             select: {
                 id: true,
                 userId: true,
@@ -155,30 +126,12 @@ export async function  getJournalEntryById (req: Request, res: Response) {
 
 export async function  updateJournalEntry (req: Request, res: Response) {
     try {
-        const params = req.params as any;
-        const query = req.query as any;
-        const body = req.body as any;
+        const id = Number(req.params.id);
+        const userId = Number(req.params.userId);
 
-        const userId =
-            params.userId ??
-            query.userId ??
-            body.userId;
+        if (!id) return res.status(400).json({ error: "Id de l'entree est requis" });
 
-        const journalId =
-            params.journalId ??
-            params.id ??
-            query.journalId ??
-            query.id ??
-            body.journalId ??
-            body.id;
-
-        if (!userId) return res.status(400).json({ error: "Utilisateur est requis" });
-        if (!journalId) return res.status(400).json({ error: "Id du journal est requis" });
-
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (!user) return res.status(404).json({ error: "Utilisateur non trouvé" });
-
-        const entry = await prisma.journalEntry.findUnique({ where: { id: journalId } });
+        const entry = await prisma.journalEntry.findUnique({ where: { id} });
         if (!entry || entry.userId !== userId) {
             return res.status(404).json({ error: "Entrée du journal non trouvée" });
         }
@@ -192,7 +145,7 @@ export async function  updateJournalEntry (req: Request, res: Response) {
             // lock modifications
             if (entry.modification !== false) {
                 await prisma.journalEntry.update({
-                    where: { id: journalId },
+                    where: { id },
                     data: { modification: false },
                 });
             }
@@ -209,7 +162,7 @@ export async function  updateJournalEntry (req: Request, res: Response) {
             sommeil,
             anxiete,
             journal,
-        } = body;
+        } = req.body;
 
         const toScore = (v: any): number | undefined => {
             if (v === undefined || v === null) return undefined;
@@ -246,7 +199,7 @@ export async function  updateJournalEntry (req: Request, res: Response) {
         }
 
         const updated = await prisma.journalEntry.update({
-            where: { id: journalId },
+            where: { id },
             data,
             select: {
                 id: true,
@@ -271,22 +224,8 @@ export async function  updateJournalEntry (req: Request, res: Response) {
 
 export async function deleteJournalEntry(req: Request, res: Response) {
     try {
-        const params = req.params as any;
-        const query = req.query as any;
-        const body = req.body as any;
-
-        const userId =
-            params.userId ??
-            query.userId ??
-            body.userId;
-
-        const journalId =
-            params.journalId ??
-            params.id ??
-            query.journalId ??
-            query.id ??
-            body.journalId ??
-            body.id;
+        const userId = Number(req.params.userId);
+        const journalId = Number(req.params.id);
 
         if (!userId) return res.status(400).json({ error: "Utilisateur est requis" });
         if (!journalId) return res.status(400).json({ error: "Id du journal est requis" });

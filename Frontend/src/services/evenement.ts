@@ -36,9 +36,12 @@ export type CreateEvenementPayload = {
 };
 
 export const createEvenement = async (userId: number, payload: CreateEvenementPayload): Promise<Evenement> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/evenements/${userId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+         },
         body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -49,9 +52,12 @@ export const createEvenement = async (userId: number, payload: CreateEvenementPa
 };
 
 export const updateEvenement = async (id: number, userId: number, payload: Partial<CreateEvenementPayload>): Promise<Evenement> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/evenements/${id}/${userId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+         },
         body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -62,8 +68,12 @@ export const updateEvenement = async (id: number, userId: number, payload: Parti
 };
 
 export const deleteEvenement = async (id: number, userId: number): Promise<void> => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE_URL}/evenements/${id}/${userId}`, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+         },
     });
     if (!res.ok) {
         throw new Error("Network response was not ok");
